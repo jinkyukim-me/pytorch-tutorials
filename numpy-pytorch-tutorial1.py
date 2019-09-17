@@ -52,5 +52,5 @@ print('Rank of t: ', t.dim()) # 차원 출력
 print('Shape of t: ', t.shape) # 크기 출력
 print('Size of t: ', t.size()) # 크기 출력
 print('t[:, 1] = ', t[:, 1])
-print('Size of t[:, 1] = ' ,t[:, 1].size())
-print('t[:, :-1] = \n',t[:, :-1]) # :-1에서 슬라이싱할 때 -1은 포함되지 않음에 주의
+print('Size of t[:, 1] = ', t[:, 1].size())
+print('t[:, :-1] = \n', t[:, :-1]) # :-1에서 슬라이싱할 때 -1은 포함되지 않음에 주의
