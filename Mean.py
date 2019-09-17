@@ -15,3 +15,10 @@ try:
     print('t1.mean() = ', t1.mean())
 except Exception as E:
     print(E)
+
+t = torch.FloatTensor([[1,2],[3,4]])
+print('t = \n', t)
+print('t.mean() = ', t.mean())
+print('t.mean(dim=0) = ', t.mean(dim=0))
+print('t.mean(dim=1) = ', t.mean(dim=1))
+print('t.mean(dim=-1) = ', t.mean(dim=-1))
