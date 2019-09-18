@@ -11,7 +11,7 @@ y_train = torch.FloatTensor([[152], [185], [180], [196], [142]])
 W = torch.zeros((3,1), requires_grad=True)
 b = torch.zeros(1, requires_grad=True)
 # optimizer 설정
-optimizer = optim.SGD([W, b], lr=0.000045)
+optimizer = optim.SGD([W, b], lr=0.00001)
 
 nb_epochs = 20000
 for epoch in range(1, nb_epochs + 1):
