@@ -6,7 +6,7 @@ y_train = torch.FloatTensor([[2], [4], [6]])
 w = torch.zeros(1, requires_grad=True)
 b = torch.zeros(1, requires_grad=True)
 
-optimizer = torch.optim.SGD([w,b], lr=0.04)
+optimizer = torch.optim.SGD([w,b], lr=0.038)
 
 nb_epochs = 1000
 for epoch in range(1, nb_epochs + 1):
@@ -16,6 +16,8 @@ for epoch in range(1, nb_epochs + 1):
     optimizer.zero_grad()
     loss.backward()
     optimizer.step()
-print(w)
-print(b)
-print(4*w+b)
+
+# 10번마다 로그 출력
+    if epoch % 10 == 0:
+        print('Epoch {:4d}/{} W: {:.8f}, b: {:.8f} Cost: {:.8f}'
+            .format(epoch, nb_epochs, w.item(), b.item(), loss.item()))
