@@ -9,3 +9,9 @@ print('ft.shape = ', ft.shape)
 print()
 print('View')
 print('ft.view([-1, 3]) = \n', ft.view([-1, 3]))
+print('ft.view([-1, 4]) = \n', ft.view([-1, 4]))
+print('ft.view([-1, 6]) = \n', ft.view([-1, 6]))
+try:
+    print('ft.view([-1, 5]) = \n', ft.view([-1, 5]))
+except Exception as E:
+    print(E)
