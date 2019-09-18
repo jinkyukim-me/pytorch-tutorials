@@ -5,9 +5,9 @@ y_train = torch.FloatTensor([[1], [2], [3]])
 # 모델 초기화
 W = torch.zeros(1)
 # Learning rate 설정
-lr = 0.1
+lr = 0.01
 
-nb_epochs = 10
+nb_epochs = 100
 for epoch in range(1, nb_epochs + 1):
 
     # H(x) 계산
