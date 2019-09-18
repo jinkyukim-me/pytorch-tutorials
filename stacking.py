@@ -15,4 +15,7 @@ print(torch.stack([x,y,z], dim=1).shape)
 print()
 print(torch.cat([x,y,z], dim=0))
 print(torch.cat([x,y,z], dim=0).shape)
-
+print()
+print(torch.cat([x.unsqueeze(0), y.unsqueeze(0), z.unsqueeze(0)], dim=0))
+print(torch.cat([x.unsqueeze(0), y.unsqueeze(0), z.unsqueeze(0)])) # default dim=0
+print(torch.cat([x.unsqueeze(0), y.unsqueeze(0), z.unsqueeze(0)], dim=0).shape)
