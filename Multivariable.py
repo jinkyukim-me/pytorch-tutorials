@@ -11,9 +11,9 @@ y_train = torch.FloatTensor([[152], [185], [180], [196], [142]])
 W = torch.zeros((3,1), requires_grad=True)
 b = torch.zeros(1, requires_grad=True)
 # optimizer 설정
-optimizer = optim.SGD([W, b], lr=0.000043)
+optimizer = optim.SGD([W, b], lr=0.000045)
 
-nb_epochs = 13000
+nb_epochs = 20000
 for epoch in range(1, nb_epochs + 1):
     # H(x) 계산
     hypothesis = x_train.matmul(W) + b # or .mm or @
@@ -24,7 +24,7 @@ for epoch in range(1, nb_epochs + 1):
     cost.backward()
     optimizer.step()
     # 10마다 로그 출력
-    if epoch % 10 == 0:
+    if epoch % 100 == 0:
         print('Epoch {:4d}/{} hypothesis: {} Cost: {:.6f}'
               .format(epoch, nb_epochs, hypothesis.squeeze().detach(),
                       cost.item()))
