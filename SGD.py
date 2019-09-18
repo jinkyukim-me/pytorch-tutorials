@@ -1,12 +1,12 @@
 import torch
-
+import torch.optim as optim
 x_train = torch.FloatTensor([[1], [2], [3]])
 y_train = torch.FloatTensor([[2], [4], [6]])
 
 w = torch.zeros(1, requires_grad=True)
 b = torch.zeros(1, requires_grad=True)
 
-optimizer = torch.optim.SGD([w,b], lr=0.038)
+optimizer = optim.SGD([w,b], lr=0.038)
 
 nb_epochs = 1000
 for epoch in range(1, nb_epochs + 1):
