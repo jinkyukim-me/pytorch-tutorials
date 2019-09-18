@@ -6,7 +6,7 @@ y_train = torch.FloatTensor([[2], [4], [6]])
 w = torch.zeros(1, requires_grad=True)
 b = torch.zeros(1, requires_grad=True)
 
-optimizer = torch.optim.SGD([w,b], lr=0.03)
+optimizer = torch.optim.SGD([w,b], lr=0.04)
 
 nb_epochs = 1000
 for epoch in range(1, nb_epochs + 1):
