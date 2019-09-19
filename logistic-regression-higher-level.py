@@ -47,7 +47,7 @@ for epoch in range(nb_epochs + 1):
     cost.backward()
     optimizer.step()
 
-    # 20번마다 로그 출력
+    # 10번마다 로그 출력
     if epoch % 10 == 0:
         prediction = hypothesis >= torch.FloatTensor([0.5])
         correct_prediction = prediction.float() == y_train
