@@ -4,7 +4,6 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch.utils.data import Dataset, DataLoader
 
-
 class MultivariateLinearRegressionModel(nn.Module):
     def __init__(self):
         super().__init__()
@@ -13,6 +12,8 @@ class MultivariateLinearRegressionModel(nn.Module):
     def forward(self, x):
         return self.linear(x)
 
+# For reproducibility
+torch.manual_seed(1)
 
 # Dataset
 class CustomDataset(Dataset):
@@ -42,7 +43,7 @@ dataloader = DataLoader(
 model = MultivariateLinearRegressionModel()
 
 # optimizer 설정
-optimizer = optim.SGD(model.parameters(), lr=0.000001)
+optimizer = optim.SGD(model.parameters(), lr=0.00001)
 
 nb_epochs = 30
 for epoch in range(nb_epochs + 1):
