@@ -3,6 +3,8 @@ import torch.optim as optim
 import torch.nn as nn
 import torch.functional as F
 from torch.utils.data import Dataset
+from torch.utils.data import DataLoader
+
 # Dataset
 class CustomDataset(Dataset):
     def __init__(self):
@@ -16,3 +18,6 @@ class CustomDataset(Dataset):
         return x,y
 
 dataset = CustomDataset()
+
+# DataLoader
+dataloader = DataLoader(dataset, batch_size=2, shuffle=True)
