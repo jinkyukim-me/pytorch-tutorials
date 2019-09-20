@@ -63,6 +63,7 @@ optimizer = optim.Adam(model.parameters(), lr=learning_rate)
 
 # train
 total_batch = len(data_loader)
+model.train() # set the model to train mode (dropout=True)
 for epoch in range(training_epochs):
     avg_cost = 0
 
@@ -86,6 +87,7 @@ print('Learning finished')
 
 # Test the model using test sets
 with torch.no_grad():
+    model.eval() # set the model to evaluation mode (dropout=False)
     X_test = mnist_test.test_data.view(-1, 28 * 28).float().to(device)
     Y_test = mnist_test.test_labels.to(device)
 
