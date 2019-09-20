@@ -45,7 +45,9 @@ nn.init.xavier_uniform_(linear2.weight)
 nn.init.xavier_uniform_(linear3.weight)
 
 # model
-model = nn.Sequential(linear1, relu, linear2, relu, linear3).to(device)
+model = nn.Sequential(linear1, relu,
+                      linear2, relu,
+                      linear3).to(device)
 
 # define cost/loss & optimizer
 criterion = nn.CrossEntropyLoss().to(device)    # Softmax is internally computed.
