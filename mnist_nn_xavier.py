@@ -40,9 +40,9 @@ linear3 = nn.Linear(256, 10, bias=True)
 relu = nn.ReLU()
 
 # Initialization
-nn.init.normal_(linear1.weight)
-nn.init.normal_(linear2.weight)
-nn.init.normal_(linear3.weight)
+nn.init.xavier_uniform_(linear1.weight)
+nn.init.xavier_uniform_(linear2.weight)
+nn.init.xavier_uniform_(linear3.weight)
 
 # model
 model = nn.Sequential(linear1, relu, linear2, relu, linear3).to(device)
