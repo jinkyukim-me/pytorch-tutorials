@@ -9,15 +9,15 @@ import random
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 # for reproducibility
-torch.manual_seed(777)
+torch.manual_seed(1)
 if device == 'cuda':
-    torch.cuda.manual_seed_all(777)
+    torch.cuda.manual_seed_all(1)
 
 # parameters
 learning_rate = 0.001
 training_epochs = 15
 batch_size = 100
-drop_prob = 0.3
+
 
 # mnnist dataset
 mnist_train = dsets.MNIST(root='MNIST_data/',
@@ -29,33 +29,35 @@ mnist_test = dsets.MNIST(root='MNIST_data/',
                          transform=transforms.ToTensor(),
                          download=True)
 # dataloader
-data_loader = torch.utils.data.DataLoader(dataset=mnist_train,
+train_loader = torch.utils.data.DataLoader(dataset=mnist_train,
                                           batch_size=batch_size,
                                           shuffle=True,
                                           drop_last=True)
-
+test_loader = torch.utils.data.DataLoader(dataset=mnist_train,
+                                          batch_size=batch_size,
+                                          shuffle=False,
+                                          drop_last=True)
 # nn layers
-linear1 = nn.Linear(784, 512, bias=True)
-linear2 = nn.Linear(512, 512, bias=True)
-linear3 = nn.Linear(512, 512, bias=True)
-linear4 = nn.Linear(512, 512, bias=True)
-linear5 = nn.Linear(512, 10, bias=True)
-relu = nn.ReLU()
+linear1 = torch.nn.Linear(784, 32, bias=True)
+bn1 = torch.nn.BatchNorm1d(32)
+linear2 = torch.nn.Linear(32, 32, bias=True)
+bn2 = torch.nn.BatchNorm1d(32)
+linear3 = torch.nn.Linear(32, 10, bias=True)
+relu = torch.nn.ReLU()
 
-# Initialization
-nn.init.xavier_uniform_(linear1.weight)
-nn.init.xavier_uniform_(linear2.weight)
-nn.init.xavier_uniform_(linear3.weight)
-nn.init.xavier_uniform_(linear4.weight)
-nn.init.xavier_uniform_(linear5.weight)
-dropout = nn.Dropout(p=drop_prob)
+nn_linear1 = torch.nn.Linear(784, 32, bias=True)
+nn_linear2 = torch.nn.Linear(32, 32, bias=True)
+nn_linear3 = torch.nn.Linear(32, 10, bias=True)
 
 # model
-model = nn.Sequential(linear1, relu,
-                      linear2, relu,
-                      linear3, relu,
-                      linear4, relu,
-                      linear5).to(device)
+# model
+bn_model = torch.nn.Sequential(linear1, bn1, relu,
+                            linear2, bn2, relu,
+                            linear3).to(device)
+
+nn_model = torch.nn.Sequential(nn_linear1, relu,
+                               nn_linear2, relu,
+                               nn_linear3).to(device)
 
 # define cost/loss & optimizer
 criterion = nn.CrossEntropyLoss().to(device)    # Softmax is internally computed.
