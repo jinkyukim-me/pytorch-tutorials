@@ -34,15 +34,19 @@ data_loader = torch.utils.data.DataLoader(dataset=mnist_train,
                                           drop_last=True)
 
 # nn layers
-linear1 = nn.Linear(784, 256, bias=True)
-linear2 = nn.Linear(256, 256, bias=True)
-linear3 = nn.Linear(256, 10, bias=True)
+linear1 = nn.Linear(784, 512, bias=True)
+linear2 = nn.Linear(512, 512, bias=True)
+linear3 = nn.Linear(512, 512, bias=True)
+linear4 = nn.Linear(512, 512, bias=True)
+linear5 = nn.Linear(512, 10, bias=True)
 relu = nn.ReLU()
 
 # Initialization
 nn.init.xavier_uniform_(linear1.weight)
 nn.init.xavier_uniform_(linear2.weight)
 nn.init.xavier_uniform_(linear3.weight)
+nn.init.xavier_uniform_(linear4.weight)
+nn.init.xavier_uniform_(linear5.weight)
 
 # model
 model = nn.Sequential(linear1, relu, linear2, relu, linear3).to(device)
