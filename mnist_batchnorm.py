@@ -4,6 +4,7 @@ import torch.optim as optim
 import torchvision.datasets as dsets
 import torchvision.transforms as transforms
 import random
+import matplotlib.pyplot as plt
 
 # GPU
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
@@ -37,6 +38,7 @@ test_loader = torch.utils.data.DataLoader(dataset=mnist_train,
                                           batch_size=batch_size,
                                           shuffle=False,
                                           drop_last=True)
+
 # nn layers
 linear1 = torch.nn.Linear(784, 32, bias=True)
 bn1 = torch.nn.BatchNorm1d(32)
@@ -61,48 +63,107 @@ nn_model = torch.nn.Sequential(nn_linear1, relu,
 
 # define cost/loss & optimizer
 criterion = nn.CrossEntropyLoss().to(device)    # Softmax is internally computed.
-optimizer = optim.Adam(model.parameters(), lr=learning_rate)
+bn_optimizer = optim.Adam(bn_model.parameters(), lr=learning_rate)
+nn_optimizer = optim.Adam(nn_model.parameters(), lr=learning_rate)
 
-# train
-total_batch = len(data_loader)
-model.train() # set the model to train mode (dropout=True)
+# Save Losses and Accuracies every epoch
+# We are going to plot them later
+train_losses = []
+train_accs = []
+
+valid_losses = []
+valid_accs = []
+
+train_total_batch = len(train_loader)
+test_total_batch = len(test_loader)
 for epoch in range(training_epochs):
-    avg_cost = 0
+    bn_model.train()  # set the model to train mode
 
-    for X, Y in data_loader:
+    for X, Y in train_loader:
         # reshape input image into [batch_size by 784]
         # label is not one-hot encoded
         X = X.view(-1, 28 * 28).to(device)
         Y = Y.to(device)
 
-        optimizer.zero_grad()
-        hypothesis = model(X)
-        cost = criterion(hypothesis, Y)
-        cost.backward()
-        optimizer.step()
+        bn_optimizer.zero_grad()
+        bn_prediction = bn_model(X)
+        bn_loss = criterion(bn_prediction, Y)
+        bn_loss.backward()
+        bn_optimizer.step()
 
-        avg_cost += cost / total_batch
+        nn_optimizer.zero_grad()
+        nn_prediction = nn_model(X)
+        nn_loss = criterion(nn_prediction, Y)
+        nn_loss.backward()
+        nn_optimizer.step()
 
-    print('Epoch:', '%04d' % (epoch + 1), 'cost =', '{:.9f}'.format(avg_cost))
+    with torch.no_grad():
+        bn_model.eval()     # set the model to evaluation mode
+
+        # Test the model using train sets
+        bn_loss, nn_loss, bn_acc, nn_acc = 0, 0, 0, 0
+        for i, (X, Y) in enumerate(train_loader):
+            X = X.view(-1, 28 * 28).to(device)
+            Y = Y.to(device)
+
+            bn_prediction = bn_model(X)
+            bn_correct_prediction = torch.argmax(bn_prediction, 1) == Y
+            bn_loss += criterion(bn_prediction, Y)
+            bn_acc += bn_correct_prediction.float().mean()
+
+            nn_prediction = nn_model(X)
+            nn_correct_prediction = torch.argmax(nn_prediction, 1) == Y
+            nn_loss += criterion(nn_prediction, Y)
+            nn_acc += nn_correct_prediction.float().mean()
+
+        bn_loss, nn_loss, bn_acc, nn_acc = bn_loss / train_total_batch, nn_loss / train_total_batch, bn_acc / train_total_batch, nn_acc / train_total_batch
+
+        # Save train losses/acc
+        train_losses.append([bn_loss, nn_loss])
+        train_accs.append([bn_acc, nn_acc])
+        print(
+            '[Epoch %d-TRAIN] Batchnorm Loss(Acc): bn_loss:%.5f(bn_acc:%.2f) vs No Batchnorm Loss(Acc): nn_loss:%.5f(nn_acc:%.2f)' % (
+            (epoch + 1), bn_loss.item(), bn_acc.item(), nn_loss.item(), nn_acc.item()))
+        # Test the model using test sets
+        bn_loss, nn_loss, bn_acc, nn_acc = 0, 0, 0, 0
+        for i, (X, Y) in enumerate(test_loader):
+            X = X.view(-1, 28 * 28).to(device)
+            Y = Y.to(device)
+
+            bn_prediction = bn_model(X)
+            bn_correct_prediction = torch.argmax(bn_prediction, 1) == Y
+            bn_loss += criterion(bn_prediction, Y)
+            bn_acc += bn_correct_prediction.float().mean()
+
+            nn_prediction = nn_model(X)
+            nn_correct_prediction = torch.argmax(nn_prediction, 1) == Y
+            nn_loss += criterion(nn_prediction, Y)
+            nn_acc += nn_correct_prediction.float().mean()
+
+        bn_loss, nn_loss, bn_acc, nn_acc = bn_loss / test_total_batch, nn_loss / test_total_batch, bn_acc / test_total_batch, nn_acc / test_total_batch
+
+        # Save valid losses/acc
+        valid_losses.append([bn_loss, nn_loss])
+        valid_accs.append([bn_acc, nn_acc])
+        print(
+            '[Epoch %d-VALID] Batchnorm Loss(Acc): bn_loss:%.5f(bn_acc:%.2f) vs No Batchnorm Loss(Acc): nn_loss:%.5f(nn_acc:%.2f)' % (
+                (epoch + 1), bn_loss.item(), bn_acc.item(), nn_loss.item(), nn_acc.item()))
+        print()
 
 print('Learning finished')
 
-# Test the model using test sets
-with torch.no_grad():
-    model.eval() # set the model to evaluation mode (dropout=False)
-    X_test = mnist_test.test_data.view(-1, 28 * 28).float().to(device)
-    Y_test = mnist_test.test_labels.to(device)
+def plot_compare(loss_list: list, ylim=None, title=None) -> None:
+    bn = [i[0] for i in loss_list]
+    nn = [i[1] for i in loss_list]
 
-    prediction = model(X_test)
-    correct_prediction = torch.argmax(prediction, 1) == Y_test
-    accuracy = correct_prediction.float().mean()
-    print('Accuracy:', accuracy.item())
+    plt.figure(figsize=(15, 10))
+    plt.plot(bn, label='With BN')
+    plt.plot(nn, label='Without BN')
+    if ylim:
+        plt.ylim(ylim)
 
-    # Get one and predict
-    r = random.randint(0, len(mnist_test) - 1)
-    X_single_data = mnist_test.test_data[r:r + 1].view(-1, 28 * 28).float().to(device)
-    Y_single_data = mnist_test.test_labels[r:r + 1].to(device)
-
-    print('Label: ', Y_single_data.item())
-    single_prediction = model(X_single_data)
-    print('Prediction: ', torch.argmax(single_prediction, 1).item())
+    if title:
+        plt.title(title)
+    plt.legend()
+    plt.grid('on')
+    plt.show()
