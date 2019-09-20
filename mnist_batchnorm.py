@@ -167,3 +167,8 @@ def plot_compare(loss_list: list, ylim=None, title=None) -> None:
     plt.legend()
     plt.grid('on')
     plt.show()
+
+plot_compare(train_losses, title='Training Loss at Epoch')
+plot_compare(train_accs, [0, 1.0], title='Training Acc at Epoch')
+plot_compare(valid_losses, title='Validation Loss at Epoch')
+plot_compare(valid_accs, [0, 1.0], title='Validation Acc at Epoch')
