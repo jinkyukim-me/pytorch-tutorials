@@ -17,6 +17,7 @@ if device == 'cuda':
 learning_rate = 0.001
 training_epochs = 15
 batch_size = 100
+drop_prob = 0.3
 
 # mnnist dataset
 mnist_train = dsets.MNIST(root='MNIST_data/',
@@ -47,6 +48,7 @@ nn.init.xavier_uniform_(linear2.weight)
 nn.init.xavier_uniform_(linear3.weight)
 nn.init.xavier_uniform_(linear4.weight)
 nn.init.xavier_uniform_(linear5.weight)
+dropout = nn.Dropout(p=drop_prob)
 
 # model
 model = nn.Sequential(linear1, relu, linear2, relu, linear3).to(device)
